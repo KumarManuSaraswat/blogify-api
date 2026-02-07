@@ -1,13 +1,14 @@
 const express = require('express');
 const app = express();
-// 1. Import the router
-const postRoutes = require('./src/routes/posts.routes');
+
+// 1. Import the router (You named it 'postRouter' here)
+const postRouter = require('./routes/posts.routes');
 
 app.use(express.json());
 
 // 2. Mount the router
-// Every route inside postRoutes will now be prefixed with /api/v1/posts
-app.use('/api/v1/posts', postRoutes);
+// FIX: Changed 'postRoutes' to 'postRouter' to match the variable above!
+app.use('/api/v1/posts', postRouter);
 
 const PORT = 3000;
 app.listen(PORT, () => {
