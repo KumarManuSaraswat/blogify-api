@@ -1,12 +1,15 @@
-const http = require('http');
+const express = require('express');
+const app = express();
+// 1. Import the router
+const postRoutes = require('./src/routes/posts.routes');
 
-const PORT = process.env.PORT || 3000;
+app.use(express.json());
 
-const server = http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Welcome to the Blogify API!');
-});
+// 2. Mount the router
+// Every route inside postRoutes will now be prefixed with /api/v1/posts
+app.use('/api/v1/posts', postRoutes);
 
-server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
