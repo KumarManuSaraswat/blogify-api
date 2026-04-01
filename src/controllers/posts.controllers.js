@@ -1,54 +1,57 @@
-// src/controllers/posts.controller.js
+const postsService = require('../services/posts.service');
 
-/**
- * @desc    Get all blog posts
- * @route   GET /api/v1/posts
- * @access  Public
- */
-const getAllPosts = (req, res) => {
-  // Mock data for now - in a real app, this comes from your database
-  const posts = [
-    { id: "1", title: "First Post", content: "Standardizing responses!" },
-    { id: "2", title: "Second Post", content: "Working with JSON envelopes." }
-  ];
-
-  res.status(200).json({
-    success: true,
-    data: posts // Wrapped in the standard envelope
-  });
+const getPosts = async (req, res) => {
+  try {
+    const posts = await postsService.getAllPosts();
+    res.status(200).json(posts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-/**
- * @desc    Get a single post by ID
- * @route   GET /api/v1/posts/:postId
- * @access  Public
- */
-const getPostById = async (req, res) => {
+const getPost = async (req, res) => {
   try {
-    const { postId } = req.params;
-
-    // Mocking a database find
-    const post = {
-      id: postId,
-      title: "Example Post Title",
-      content: "This is where the post body would go."
-    };
-
-    res.status(200).json({
-      success: true,
-      data: post // Consistently wrapped in the data key
-    });
+    const post = await postsService.getPostById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    res.status(200).json(post);
   } catch (error) {
-    // While the mission focuses on success, 
-    // keeping a consistent error format is also best practice
-    res.status(500).json({
-      success: false,
-      error: "Server error while fetching the post."
-    });
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const createPost = async (req, res) => {
+  try {
+    const newPost = await postsService.createPost(req.body);
+    res.status(201).json(newPost);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+const updatePost = async (req, res) => {
+  try {
+    const updatedPost = await postsService.updatePost(req.params.id, req.body);
+    if (!updatedPost) return res.status(404).json({ message: 'Post not found' });
+    res.status(200).json(updatedPost);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+const deletePost = async (req, res) => {
+  try {
+    const deletedPost = await postsService.deletePost(req.params.id);
+    if (!deletedPost) return res.status(404).json({ message: 'Post not found' });
+    res.status(200).json({ message: 'Post deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
 module.exports = {
-  getAllPosts,
-  getPostById
+  getPosts,
+  getPost,
+  createPost,
+  updatePost,
+  deletePost
 };
