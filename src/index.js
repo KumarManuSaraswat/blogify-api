@@ -1,5 +1,11 @@
 const express = require('express');
 const app = express();
+require('dotenv').config();
+const mongoose = require('mongoose');
+
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('Connected to MongoDB Atlas'))
+  .catch((err) => console.error('Database connection error:', err));
 
 // 1. Import the router (You named it 'postRouter' here)
 const postRouter = require('./routes/posts.routes');
